@@ -5,6 +5,7 @@
 import torch
 from torch import nn
 from transformers.models.bert.modeling_bert import BertPreTrainedModel, BertEncoder, BertPooler
+from transformers.modeling_outputs import BaseModelOutputWithPooling
 
 from modeling.character_cnn import CharacterCNN
 
@@ -189,9 +190,12 @@ class CharacterBertModel(BertPreTrainedModel):
         sequence_output = ('last_hidden_state', encoder_outputs[0])
         pooled_output = ('pooler_output', self.pooler(sequence_output))
 
-        outputs = (sequence_output, pooled_output,) + encoder_outputs[
-            1:
-        ]  # add hidden_states and attentions if they are here
+        outputs = BaseModelOutputWithPooling(
+            last_hidden_state=sequence_output,
+            pooler_output=pooled_output,
+            hidden_states=None,
+            attentions=None
+        )
         return outputs  # sequence_output, pooled_output, (hidden_states), (attentions)
 
 
