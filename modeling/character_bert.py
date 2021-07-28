@@ -187,16 +187,15 @@ class CharacterBertModel(BertPreTrainedModel):
             encoder_hidden_states=encoder_hidden_states,
             encoder_attention_mask=encoder_extended_attention_mask,
         )
-        sequence_output = ('last_hidden_state', encoder_outputs[0])
-        pooled_output = ('pooler_output', self.pooler(sequence_output))
+        sequence_output = encoder_outputs[0]
+        pooled_output = self.pooler(sequence_output)
 
-        outputs = BaseModelOutputWithPooling(
+        return BaseModelOutputWithPooling(
             last_hidden_state=sequence_output,
             pooler_output=pooled_output,
-            hidden_states=None,
+            hidden_states=encoder_outputs[1:],
             attentions=None
-        )
-        return outputs  # sequence_output, pooled_output, (hidden_states), (attentions)
+        )  # sequence_output, pooled_output, (hidden_states), (attentions)
 
 
 if __name__ == "__main__":
